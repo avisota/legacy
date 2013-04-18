@@ -45,7 +45,7 @@ define('TL_SCRIPT_URL', '');
 define('TL_PLUGINS_URL', '');
 
 // initialize contao
-include('../../initialize.php');
+include(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME']))) . '/initialize.php');
 
 // disable error reporting
 #error_reporting(0);
