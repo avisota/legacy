@@ -117,7 +117,7 @@ class WidgetEventchooser extends Widget
 	protected function getAllEvents()
 	{
 		$intStart = time();
-		$intEnd   = $intStart + 360 * 3600 * 24;
+		$intEnd   = $intStart + 90 * 3600 * 24;
 
 		$arrValue = $this->value;
 		foreach ($arrValue as $k => $v) {
