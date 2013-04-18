@@ -780,27 +780,27 @@ class AvisotaTransport extends Backend
 	 */
 	protected function prepareTrackingHtml($objNewsletter, $objCategory, $objRecipient, $strHtml)
 	{
-		$strHtml = $strHtml;
+		if ($GLOBALS['TL_CONFIG']['avisota_tracking']) {
+			$objPrepareTrackingHelper = new PrepareTrackingHelper($objNewsletter, $objCategory, $objRecipient);
+			$strHtml = preg_replace_callback('#(<a[^>]*)href=["\']((http|ftp)s?:\/\/.+)["\']#U', array(&$objPrepareTrackingHelper, 'replaceHtml'), $strHtml);
 
-		$objPrepareTrackingHelper = new PrepareTrackingHelper($objNewsletter, $objCategory, $objRecipient);
-		$strHtml = preg_replace_callback('#(<a[^>]*)href=["\']((http|ftp)s?:\/\/.+)["\']#U', array(&$objPrepareTrackingHelper, 'replaceHtml'), $strHtml);
-
-		$objRead = $this->Database
-			->prepare("SELECT * FROM tl_avisota_statistic_raw_recipient WHERE pid=? AND recipient=?")
-			->executeUncached($objNewsletter->id, $objRecipient->email);
-		if ($objRead->next())
-		{
-			$intRead = $objRead->id;
-		}
-		else
-		{
 			$objRead = $this->Database
-				->prepare("INSERT INTO tl_avisota_statistic_raw_recipient (pid,tstamp,recipient,recipientID,source,sourceID) VALUES (?, ?, ?, ?, ?, ?)")
-				->executeUncached($objNewsletter->id, time(), $objRecipient->email, $objRecipient->recipientID, $objRecipient->source, $objRecipient->sourceID);
-			$intRead = $objRead->insertId;
-		}
+				->prepare("SELECT * FROM tl_avisota_statistic_raw_recipient WHERE pid=? AND recipient=?")
+				->executeUncached($objNewsletter->id, $objRecipient->email);
+			if ($objRead->next())
+			{
+				$intRead = $objRead->id;
+			}
+			else
+			{
+				$objRead = $this->Database
+					->prepare("INSERT INTO tl_avisota_statistic_raw_recipient (pid,tstamp,recipient,recipientID,source,sourceID) VALUES (?, ?, ?, ?, ?, ?)")
+					->executeUncached($objNewsletter->id, time(), $objRecipient->email, $objRecipient->recipientID, $objRecipient->source, $objRecipient->sourceID);
+				$intRead = $objRead->insertId;
+			}
 
-		$strHtml = str_replace('</body>', '<img src="' . $this->Base->extendURL('nltrack.php?read=' . $intRead, null, $objCategory, $objRecipient->row()) . '" alt="" width="1" height="1" />', $strHtml);
+			$strHtml = str_replace('</body>', '<img src="' . $this->Base->extendURL('nltrack.php?read=' . $intRead, null, $objCategory, $objRecipient->row()) . '" alt="" width="1" height="1" />', $strHtml);
+		}
 		return $strHtml;
 	}
 
@@ -810,10 +810,11 @@ class AvisotaTransport extends Backend
 	 */
 	protected function prepareTrackingPlain($objNewsletter, $objCategory, $objRecipient, $strPlain)
 	{
-		$strPlain = $strPlain;
-
-		$objPrepareTrackingHelper = new PrepareTrackingHelper($objNewsletter, $objCategory, $objRecipient);
-		return preg_replace_callback('#<((http|ftp)s?:\/\/.+)>#U', array(&$objPrepareTrackingHelper, 'replacePlain'), $strPlain);
+		if ($GLOBALS['TL_CONFIG']['avisota_tracking']) {
+			$objPrepareTrackingHelper = new PrepareTrackingHelper($objNewsletter, $objCategory, $objRecipient);
+			$strPlain = preg_replace_callback('#<((http|ftp)s?:\/\/.+)>#U', array(&$objPrepareTrackingHelper, 'replacePlain'), $strPlain);
+		}
+		return $strPlain;
 	}
 }
 

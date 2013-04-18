@@ -248,4 +248,14 @@ if (TL_MODE == 'BE' && $_GET['do'] == 'avisota_recipients' && $_GET['table'] == 
 	$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/Avisota/html/tl_avisota_recipient.js.php';
 }
 
-?>
+
+/**
+ * Handle tracking
+ */
+if (!array_key_exists('avisota_tracking', $GLOBALS['TL_CONFIG'])) {
+	$_SESSION['TL_ERROR']['avisota_tracking_disabled'] = 'Tracking is now disabled by default in the Avisota newsletter system. Please check your <a href="contao/main.php?do=settings">system settings</a> and update the config.';
+	$GLOBALS['TL_CONFIG']['avisota_tracking'] = null;
+}
+else {
+	unset($_SESSION['TL_ERROR']['avisota_tracking_disabled']);
+}

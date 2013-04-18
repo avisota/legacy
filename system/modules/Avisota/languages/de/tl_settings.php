@@ -36,6 +36,7 @@
 /**
  * Fields
  */
+$GLOBALS['TL_LANG']['tl_settings']['avisota_tracking']                          = array('Tracking', '<strong style="color:red">Warnung</strong> Das Tracking entspricht in der aktuellen Umsetzung nicht mit Deutschem Recht, es wird dringend geraten im Zweifel einen Anwalt zu konsultieren. Aktivieren Sie das Tracking nur, wenn Sie wissen was Sie tun!');
 $GLOBALS['TL_LANG']['tl_settings']['avisota_backend_send']                      = array('Backend-Versand', 'Wählen Sie hier, ob der Versand über das Backend möglich sein soll.');
 $GLOBALS['TL_LANG']['tl_settings']['avisota_max_send_time']                     = array('Versanddauer', 'Anzahl Sekunden die pro Zyklus vergehen dürfen, bevor ein neuer Zyklus getriggert wird.');
 $GLOBALS['TL_LANG']['tl_settings']['avisota_max_send_count']                    = array('Versandanzahl', 'Anzahl E-Mails die pro Zyklus versendet werden, bevor ein neuer Zyklus getriggert wird.');
