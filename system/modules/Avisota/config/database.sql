@@ -222,6 +222,7 @@ CREATE TABLE `tl_avisota_newsletter_outbox_recipient` (
 CREATE TABLE `tl_avisota_statistic_raw_recipient` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `pid` int(10) unsigned NOT NULL default '0',
+  `uuid` char(36) NOT NULL default '',
   `tstamp` int(10) unsigned NOT NULL default '0',
   `recipient` varchar(255) NOT NULL default '',
   `recipientID` int(10) unsigned NOT NULL default '0',
@@ -229,7 +230,8 @@ CREATE TABLE `tl_avisota_statistic_raw_recipient` (
   `sourceID` int(10) unsigned NOT NULL default '0',
   `readed` char(1) NOT NULL default '',
   PRIMARY KEY  (`id`),
-  KEY `pid` (`pid`)
+  KEY `pid` (`pid`),
+  KEY `uuid` (`uuid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -241,10 +243,12 @@ CREATE TABLE `tl_avisota_statistic_raw_recipient` (
 CREATE TABLE `tl_avisota_statistic_raw_link` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `pid` int(10) unsigned NOT NULL default '0',
+  `uuid` char(36) NOT NULL default '',
   `tstamp` int(10) unsigned NOT NULL default '0',
   `url` blob NULL,
   PRIMARY KEY  (`id`),
-  KEY `pid` (`pid`)
+  KEY `pid` (`pid`),
+  KEY `uuid` (`uuid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -256,6 +260,7 @@ CREATE TABLE `tl_avisota_statistic_raw_link` (
 CREATE TABLE `tl_avisota_statistic_raw_recipient_link` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `pid` int(10) unsigned NOT NULL default '0',
+  `uuid` char(36) NOT NULL default '',
   `linkID` int(10) unsigned NOT NULL default '0',
   `tstamp` int(10) unsigned NOT NULL default '0',
   `url` blob NULL,
@@ -263,8 +268,9 @@ CREATE TABLE `tl_avisota_statistic_raw_recipient_link` (
   `recipient` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `pid` (`pid`),
-  KEY `linkID` (`linkID`)
-  KEY `recipient` (`recipient`)
+  KEY `linkID` (`linkID`),
+  KEY `recipient` (`recipient`),
+  KEY `uuid` (`uuid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
