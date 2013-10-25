@@ -122,6 +122,15 @@ class AvisotaTransport extends Backend
 		}
 	}
 
+    /**
+     * Returns a UUID
+     * @param \Database $objDb
+     * @return string
+     */
+    public static function generateUuid(\Database $objDb) {
+        return $objDb->executeUncached("SELECT UUID() AS uuid")->uuid;
+    }
+
 	public function run()
 	{
 		// user have to be authenticated
@@ -789,17 +798,18 @@ class AvisotaTransport extends Backend
 				->executeUncached($objNewsletter->id, $objRecipient->email);
 			if ($objRead->next())
 			{
-				$intRead = $objRead->id;
+				$strReadUuid = $objRead->uuid;
 			}
 			else
 			{
+                $strReadUuid = static::generateUuid($this->Database);
+                
 				$objRead = $this->Database
-					->prepare("INSERT INTO tl_avisota_statistic_raw_recipient (pid,tstamp,recipient,recipientID,source,sourceID) VALUES (?, ?, ?, ?, ?, ?)")
-					->executeUncached($objNewsletter->id, time(), $objRecipient->email, $objRecipient->recipientID, $objRecipient->source, $objRecipient->sourceID);
-				$intRead = $objRead->insertId;
+					->prepare("INSERT INTO tl_avisota_statistic_raw_recipient (uuid,pid,tstamp,recipient,recipientID,source,sourceID) VALUES (?,?, ?, ?, ?, ?, ?)")
+					->executeUncached($strReadUuid, $objNewsletter->id, time(), $objRecipient->email, $objRecipient->recipientID, $objRecipient->source, $objRecipient->sourceID);
 			}
 
-			$strHtml = str_replace('</body>', '<img src="' . $this->Base->extendURL('nltrack.php?read=' . $intRead, null, $objCategory, $objRecipient->row()) . '" alt="" width="1" height="1" />', $strHtml);
+			$strHtml = str_replace('</body>', '<img src="' . $this->Base->extendURL('nltrack.php?read=' . $strReadUuid, null, $objCategory, $objRecipient->row()) . '" alt="" width="1" height="1" />', $strHtml);
 		}
 		return $strHtml;
 	}
@@ -889,13 +899,16 @@ class PrepareTrackingHelper extends Controller
 			->executeUncached($this->objNewsletter->id, $strUrl);
 		if ($objLink->next())
 		{
-			$intLink = $objLink->id;
+			$intLink        = $objLink->id;
+            $strLinkUuid    = $objLink->uuid;
 		}
 		else
 		{
+            $strLinkUuid = \AvisotaTransport::generateUuid($this->Database);
+            
 			$intLink = $this->Database
-				->prepare("INSERT INTO tl_avisota_statistic_raw_link (pid,tstamp,url) VALUES (?, ?, ?)")
-				->executeUncached($this->objNewsletter->id, time(), $strUrl)
+				->prepare("INSERT INTO tl_avisota_statistic_raw_link (uuid,pid,tstamp,url) VALUES (?, ?, ?, ?)")
+				->executeUncached($strLinkUuid, $this->objNewsletter->id, time(), $strUrl)
 				->insertId;
 		}
 
@@ -904,13 +917,16 @@ class PrepareTrackingHelper extends Controller
 			->executeUncached($this->objNewsletter->id, $intLink, $strUrl, $this->objRecipient->email);
 		if ($objLink->next())
 		{
-			$intRecipientLink = $objRecipientLink->id;
+			$intRecipientLink       = $objRecipientLink->id;
+            $strRecipientLinkUuid   = $objRecipientLink->uuid;
 		}
 		else
 		{
+            $strRecipientLinkUuid = \AvisotaTransport::generateUuid($this->Database);
+            
 			$intRecipientLink = $this->Database
-				->prepare("INSERT INTO tl_avisota_statistic_raw_recipient_link (pid,linkID,tstamp,url,real_url,recipient) VALUES (?, ?, ?, ?, ?, ?)")
-				->executeUncached($this->objNewsletter->id, $intLink, time(), $strUrl, $strRealUrl, $this->objRecipient->email)
+				->prepare("INSERT INTO tl_avisota_statistic_raw_recipient_link (uuid,pid,linkID,tstamp,url,real_url,recipient) VALUES (?,?, ?, ?, ?, ?, ?)")
+				->executeUncached($strRecipientLinkUuid, $this->objNewsletter->id, $intLink, time(), $strUrl, $strRealUrl, $this->objRecipient->email)
 				->insertId;
 		}
 
@@ -923,7 +939,7 @@ class PrepareTrackingHelper extends Controller
 			$objPage = null;
 		}
 
-		return $this->DomainLink->absolutizeUrl('nltrack.php?link=' . $intRecipientLink, $objPage);
+		return $this->DomainLink->absolutizeUrl('nltrack.php?link=' . $strRecipientLinkUuid, $objPage);
 	}
 }
 

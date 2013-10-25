@@ -62,11 +62,11 @@ class Tracking extends Frontend
 	public function run()
 	{
 		// newsletter read
-		if ($intId = $this->Input->get('read'))
+		if ($strUuid = $this->Input->get('read'))
 		{
 			$this->Database
-				->prepare("UPDATE tl_avisota_statistic_raw_recipient SET tstamp=?, readed=? WHERE readed='' AND id=?")
-				->execute(time(), '1', $intId);
+				->prepare("UPDATE tl_avisota_statistic_raw_recipient SET tstamp=?, readed=? WHERE readed='' AND uuid=?")
+				->execute(time(), '1', $strUuid);
 
 			$strFile = 'system/modules/Avisota/html/blank.gif';
 			$objFile = new File($strFile);
@@ -87,11 +87,11 @@ class Tracking extends Frontend
 		}
 
 		// newsletter link click
-		if ($intId = $this->Input->get('link'))
+		if ($strUuid = $this->Input->get('link'))
 		{
 			$objRecipientLink = $this->Database
-				->prepare("SELECT * FROM tl_avisota_statistic_raw_recipient_link WHERE id=?")
-				->execute($intId);
+				->prepare("SELECT * FROM tl_avisota_statistic_raw_recipient_link WHERE uuid=?")
+				->execute($strUuid);
 			if ($objRecipientLink->next())
 			{
 				// set read state
