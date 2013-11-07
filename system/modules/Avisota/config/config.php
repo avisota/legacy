@@ -256,6 +256,6 @@ if (!array_key_exists('avisota_tracking', $GLOBALS['TL_CONFIG'])) {
 	$_SESSION['TL_ERROR']['avisota_tracking_disabled'] = 'Tracking is now disabled by default in the Avisota newsletter system. Please check your <a href="contao/main.php?do=settings">system settings</a> and update the config.';
 	$GLOBALS['TL_CONFIG']['avisota_tracking'] = null;
 }
-else {
+elseif(isset($_SESSION['TL_ERROR']['avisota_tracking_disabled'])) {
 	unset($_SESSION['TL_ERROR']['avisota_tracking_disabled']);
 }
